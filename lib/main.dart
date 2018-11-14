@@ -136,29 +136,47 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           children: <Widget>[
-            ListTile(
-              contentPadding: EdgeInsets.only(top: 4.0, bottom: 4.0),
-              leading: Image.network(
-                'https://images.unsplash.com/photo-1542091934-0f2075cd3433?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=65c33f5a7864882a76f1c3dcb5802316&auto=format&fit=crop&w=658&q=80',
-                width: 60,
-                height: 60,
+            Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    leading: Icon(Icons.album),
+                    title: Text('The Enchanted Nightingale'),
+                    subtitle: const Text(
+                        'Music by Julie Gable. Lyrics by Sidney Stein'),
+                    onTap: () => {},
+                  )
+                ],
               ),
-              title: Text('Hello World'),
-              subtitle: Text('Subtitle'),
-              onTap: () => {},
-              onLongPress: () => {},
             ),
-            ListTile(
-              contentPadding: EdgeInsets.only(top: 4.0, bottom: 4.0),
-              leading: Image.network(
-                'https://images.unsplash.com/photo-1542091934-0f2075cd3433?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=65c33f5a7864882a76f1c3dcb5802316&auto=format&fit=crop&w=658&q=80',
-                width: 60,
-                height: 60,
+            Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    leading: Icon(Icons.album),
+                    title: Text('The Enchanted Nightingale'),
+                    subtitle: const Text(
+                        'Music by Julie Gable. Lyrics by Sidney Stein'),
+                    onTap: () => {},
+                  )
+                ],
               ),
-              title: Text('Hello World'),
-              subtitle: Text('Subtitle'),
-              onTap: () => {},
-              onLongPress: () => {},
+            ),
+            Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    leading: Icon(Icons.album),
+                    title: Text('The Enchanted Nightingale'),
+                    subtitle: const Text(
+                        'Music by Julie Gable. Lyrics by Sidney Stein'),
+                    onTap: () => {},
+                  )
+                ],
+              ),
             ),
           ],
         ),
