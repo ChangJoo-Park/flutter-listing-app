@@ -1,4 +1,9 @@
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,7 +30,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  Map<String, double> _startLocation;
+  Map<String, double> _currentLocation;
+
+  StreamSubscription<Map<String, double>> _locationSubscription;
+
+  Location _location = new Location();
+  bool _permission = false;
+  String error;
 
   void pushWithModal(Widget nextWidget) {
     Navigator.push(
@@ -46,8 +58,25 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          pushWithModal(NearMeWidget());
+        onPressed: () async {
+          Map<String, double> location;
+          try {
+            _permission = await _location.hasPermission();
+            location = await _location.getLocation();
+            error = null;
+            pushWithModal(NearMe(location));
+          } on PlatformException catch (e) {
+            print('=============');
+            print(e);
+            print('=============');
+            if (e.code == 'PERMISSION_DENIED') {
+              error = 'Permission denied';
+            } else if (e.code == 'PERMISSION_DENIED_NEVER_ASK') {
+              error =
+                  'Permission denied - please ask the user to enable it from the app settings';
+            }
+            location = null;
+          }
         },
         tooltip: 'Near Me',
         elevation: 4.0,
@@ -196,14 +225,76 @@ class SearchWidget extends StatelessWidget {
   }
 }
 
-class NearMeWidget extends StatelessWidget {
+class NearMe extends StatefulWidget {
+  Map<String, double> location;
+
+  NearMe(this.location);
+
+  @override
+  State createState() => NearMeState(location);
+}
+
+class NearMeState extends State<NearMe> {
+  GoogleMapController mapController;
+  Map<String, double> location;
+
+  NearMeState(this.location);
+
+  @override
+  void initState() {
+    super.initState();
+    print('===============');
+    print(this.location);
+    _initPlatformState();
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  void _initPlatformState() async {}
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQueryData.fromWindow(ui.window).size;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Near Me'),
-      ),
-    );
+        appBar: AppBar(
+          title: Text('Near Me'),
+        ),
+        body: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(0.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Center(
+                    child: SizedBox(
+                      width: size.width,
+                      height: size.height - 80,
+                      child: GoogleMap(
+                        onMapCreated: _onMapCreated,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ));
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      controller.updateMapOptions(
+        GoogleMapOptions(
+          cameraPosition: CameraPosition(
+            target:
+                LatLng(this.location['latitude'], this.location['longitude']),
+            zoom: 16.0,
+          ),
+        ),
+      );
+      mapController = controller;
+    });
   }
 }
 
